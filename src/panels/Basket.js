@@ -8,10 +8,12 @@ import edit from '../img/edit.svg';
 import './place.css';
 
 
-const Basket = ({ match: { params: { areaId, itemId }}, foodAreas, order }) => {
-  const [ faster, setFaster ] = useState(true);
-  const [ time, setTime ] = useState('');
-  const [ selfService, setSelfService ] = useState(false);
+const Basket = ({ match: { params: { areaId, itemId }}, foodAreas, order, setOrderDelivery }) => {
+  const orderDelivery = JSON.parse(localStorage.getItem('orderDelivery')) || {};
+  const orderDeliveryItem = orderDelivery[itemId] || {};
+  const [ faster, setFaster ] = useState(orderDeliveryItem.faster || false);
+  const [ time, setTime ] = useState(orderDeliveryItem.time || '');
+  const [ selfService, setSelfService ] = useState(orderDeliveryItem.selfService || false);
   const area = foodAreas.filter(area => area.id === areaId)[0];
   const item = area.items.filter(item => item.id === itemId)[0];
 
@@ -33,6 +35,15 @@ const Basket = ({ match: { params: { areaId, itemId }}, foodAreas, order }) => {
 
     return [ accounting.formatNumber(result, 0, ' '), products ];
   }, [ order, item ]);
+
+  const validateTime = (time) => {
+    const acceptedItems = '0123456789:';
+    const item = time[time.length - 1];
+    if (time.length >= 6) return false;
+    if (!item) return true;
+    if (acceptedItems.indexOf(item) >= 0) return true;
+    if (acceptedItems.indexOf(item) === -1) return false;
+  }
 
   return (
     <div className="Place">
@@ -128,7 +139,9 @@ const Basket = ({ match: { params: { areaId, itemId }}, foodAreas, order }) => {
             }}
             onChange={event => {
               setFaster(false);
-              setTime(event.target.value);
+              if (validateTime(event.target.value)) {
+                setTime(event.target.value);
+              }
             }}
             onBlur={() => {
               if (time) {
@@ -147,7 +160,7 @@ const Basket = ({ match: { params: { areaId, itemId }}, foodAreas, order }) => {
         </div>
       </div>
       <footer className="Place__footer">
-        <Link to={`/order/${area.id}/${item.id}`} className="Place__order">
+        <Link to={`/order/${area.id}/${item.id}`} className="Place__order" onClick={() => setOrderDelivery({itemId, faster, time, selfService})}>
           Оплатить {price}
         </Link>
       </footer>

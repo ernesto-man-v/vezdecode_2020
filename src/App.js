@@ -33,7 +33,7 @@ const FOOD_AREAS = [{
 			name: 'Классик',
 			price: 150,
 		}, {
-			id: 'bigmac',
+			id: 'fries',
 			image: OneTowar,
 			name: 'Картофель фри',
 			price: 50,
@@ -127,6 +127,7 @@ const foodsMap = FOOD_AREAS.reduce((result, area) => {
 const App = () => {
 	const [ orderStatuses, setOrderStatuses ] = useState(JSON.parse((localStorage.getItem('orderStatuses') || 'null')) || {});
 	const [ order, setOrder ] = useState(JSON.parse((localStorage.getItem('orders') || 'null')) || {});
+	const [ orderDelivery, setOrderDelivery ] = useState(JSON.parse((localStorage.getItem('orderDelivery') || 'null')) || {});
 
 	return (
 		<Router>
@@ -152,6 +153,20 @@ const App = () => {
 					<Basket
 						foodAreas={FOOD_AREAS}
 						order={order}
+						setOrderDelivery={({ itemId, faster, time, selfService }) => {
+							console.log(itemId);
+							console.log(orderDelivery);
+							const updatedOrderDelivery = {
+								...orderDelivery
+							};
+							updatedOrderDelivery[itemId] = {
+								faster,
+								time,
+								selfService
+							};
+							console.log(updatedOrderDelivery);
+							localStorage.setItem('orderDelivery', JSON.stringify(updatedOrderDelivery));
+						}}
 					/>
 				</Route>
 				<Route
@@ -165,7 +180,7 @@ const App = () => {
 						setFinishedOrder={({ itemId }) => {
 							const nextStatuses = {...orderStatuses};
 
-							nextStatuses[itemId] = 'DONE';
+							nextStatuses[itemId] = 'CANCELED';
 
 							setOrderStatuses(nextStatuses);
 							localStorage.setItem('orderStatuses', JSON.stringify(nextStatuses));
