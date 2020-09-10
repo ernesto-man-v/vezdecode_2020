@@ -153,9 +153,7 @@ const App = () => {
 					<Basket
 						foodAreas={FOOD_AREAS}
 						order={order}
-						setOrderDelivery={({ itemId, faster, time, selfService }) => {
-							console.log(itemId);
-							console.log(orderDelivery);
+						updateOrderDelivery={({ itemId, faster, time, selfService }) => {
 							const updatedOrderDelivery = {
 								...orderDelivery
 							};
@@ -164,7 +162,7 @@ const App = () => {
 								time,
 								selfService
 							};
-							console.log(updatedOrderDelivery);
+							setOrderDelivery(updatedOrderDelivery);
 							localStorage.setItem('orderDelivery', JSON.stringify(updatedOrderDelivery));
 						}}
 					/>

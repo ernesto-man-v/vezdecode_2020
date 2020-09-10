@@ -8,7 +8,7 @@ import edit from '../img/edit.svg';
 import './place.css';
 
 
-const Basket = ({ match: { params: { areaId, itemId }}, foodAreas, order, setOrderDelivery }) => {
+const Basket = ({ match: { params: { areaId, itemId }}, foodAreas, order, updateOrderDelivery }) => {
   const orderDelivery = JSON.parse(localStorage.getItem('orderDelivery')) || {};
   const orderDeliveryItem = orderDelivery[itemId] || {};
   const [ faster, setFaster ] = useState(orderDeliveryItem.faster || false);
@@ -160,7 +160,7 @@ const Basket = ({ match: { params: { areaId, itemId }}, foodAreas, order, setOrd
         </div>
       </div>
       <footer className="Place__footer">
-        <Link to={`/order/${area.id}/${item.id}`} className="Place__order" onClick={() => setOrderDelivery({itemId, faster, time, selfService})}>
+        <Link to={`/order/${area.id}/${item.id}`} className="Place__order" onClick={() => updateOrderDelivery({itemId, faster, time, selfService})}>
           Оплатить {price}
         </Link>
       </footer>
